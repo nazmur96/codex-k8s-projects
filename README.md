@@ -14,6 +14,7 @@ Build a minimal Amazon EKS cluster using explicit Terraform resources: a two-AZ 
 | [02 — Terraform implementation](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/01-eks-managed-node-groups/02-terraform-implementation.md) | Full Terraform file contents and explanations: networking, IAM, EKS, access, nodes, and add-ons |
 | [03 — Decisions and preflight](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/01-eks-managed-node-groups/03-decisions-and-preflight.md) | Budget, cost estimate, version queries, IP lookup troubleshooting, production tradeoffs, state and modules |
 | [04 — Deployment and evidence](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/01-eks-managed-node-groups/04-deployment-and-evidence.md) | Plan/apply record, current status, pending proof, and cleanup requirements |
+| [05 — Terraform quick reference](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/01-eks-managed-node-groups/05-terraform-reference.md) | Every component and setting explained in one-line tables: VPC, routing, SG/NACL, IAM, endpoints, workers, add-ons, and state |
 
 ## Repository layout
 
