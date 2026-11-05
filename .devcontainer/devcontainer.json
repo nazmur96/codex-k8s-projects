@@ -1,0 +1,12 @@
+{
+  "name": "EKS Terraform Lab",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers-extra/features/mise:1": {}
+  },
+  "mounts": [
+    "source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind"
+  ],
+  "postCreateCommand": "mise trust && mise install",
+  "remoteUser": "vscode"
+}
