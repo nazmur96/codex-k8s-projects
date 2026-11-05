@@ -1,267 +1,43 @@
 # Kubernetes Projects
 
-Hands-on Kubernetes learning projects: understand the components, build with Terraform, and collect evidence that the result works.
+Hands-on Kubernetes projects with Terraform, clear explanations, verification evidence, and cleanup.
 
-## Project 01: Amazon EKS with managed node groups
+## Project 01: EKS with managed node groups
 
-**Goal:** provision a minimal EKS cluster with Terraform and understand its networking, IAM roles, worker nodes, and core add-ons.
+Build a minimal Amazon EKS cluster using explicit Terraform resources: a two-AZ VPC, private worker nodes, IAM roles, managed add-ons, and restricted administrator access.
 
-Planned infrastructure:
+**Current checkpoint — November 5, 2026:** configuration validated; plan reviewed (32 additions); creation approved and apply reported in progress. Cluster functionality and cleanup are not yet proven.
 
-- VPC, subnets, routing, and security groups.
-- EKS cluster IAM role and EC2 node IAM role; dedicated workload permissions where needed.
-- EKS control plane and a managed node group.
-- Managed VPC CNI, CoreDNS, and kube-proxy add-ons.
-
-An add-on supplies a supporting capability: VPC CNI handles pod networking, CoreDNS resolves internal service names, and kube-proxy supports Kubernetes Service traffic.
-
-### Progress
-
-- [x] Configure a Docker-backed development container.
-- [x] Pin and verify project tools with mise inside the container.
-- [x] Make existing AWS profiles available through a local bind mount.
-- [x] Complete keyless Authentik-backed AWS CLI login and verify the CLI identity.
-- [ ] Verify the separate Terraform AWS profile.
-- [ ] Verify budget alerts and estimate the selected infrastructure cost.
-- [ ] Write and review Terraform networking and IAM configuration.
-- [ ] Provision EKS, managed nodes, and add-ons.
-- [ ] Prove nodes register as Ready.
-- [ ] Prove DNS resolves from a test pod.
-- [ ] Prove a test workload becomes Ready.
-- [ ] Destroy the lab and verify cleanup.
-
-**Current state:** development environment prepared. No Terraform infrastructure has been written or applied, and no billable AWS infrastructure has been created by this project.
-
-## Development environment
-
-Docker runs the container; DevPod creates it and provides SSH access. The devcontainer defines Ubuntu userland, and mise installs the declared project tools inside it. A graphical editor is optional.
-
-| Tool | Pinned version |
+| Guide | Contents |
 | --- | --- |
-| Terraform | 1.17.1 |
-| AWS CLI | 2.39.3 |
-| kubectl | 1.37.2 |
+| [01 — Development environment](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/01-eks-managed-node-groups/01-development-environment.md) | Full mise/devcontainer files, Vim steps, Docker/DevPod/SSH, Cursor troubleshooting, AWS mount, Authentik login, host-tool cleanup |
+| [02 — Terraform implementation](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/01-eks-managed-node-groups/02-terraform-implementation.md) | Full Terraform file contents and explanations: networking, IAM, EKS, access, nodes, and add-ons |
+| [03 — Decisions and preflight](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/01-eks-managed-node-groups/03-decisions-and-preflight.md) | Budget, cost estimate, version queries, IP lookup troubleshooting, production tradeoffs, state and modules |
+| [04 — Deployment and evidence](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/01-eks-managed-node-groups/04-deployment-and-evidence.md) | Plan/apply record, current status, pending proof, and cleanup requirements |
 
-The EKS Kubernetes version has not been selected. Check kubectl compatibility before selecting it.
+## Repository layout
 
-The container uses the Linux user `vscode`; this name comes from the base image and does not require the VS Code editor.
-
-### 1. Check host prerequisites
-
-Run on the **host**:
-
-```sh
-mise --version
-devpod version
-docker --version
-docker info
+```text
+.devcontainer/devcontainer.json   Development container and local AWS mount
+mise.toml                        Pinned project tools
+terraform/                       Runnable root module and provider lock file
+docs/01-eks-managed-node-groups/  Step-by-step project guides
 ```
 
-Docker was selected instead of Podman because of networking issues encountered with Podman. Project tools belong inside the development container.
-
-### 2. Declare tools and the container
-
-On the **host**, enter the project directory and create the tool configuration:
-
-```sh
-cd ~/orca/projects/codex-k8s-projects
-vim mise.toml
-```
-
-In Vim, press `i`, paste the following, then press Escape, type `:wq`, and press Enter to save and exit.
-
-Full contents of [mise.toml](https://github.com/nazmur96/codex-k8s-projects/blob/main/mise.toml):
-
-```toml
-[tools]
-terraform = "1.17.1"
-aws-cli = "2.39.3"
-kubectl = "1.37.2"
-```
-
-`[tools]` declares the tool list. Terraform manages AWS infrastructure, AWS CLI handles login and AWS API commands, and kubectl communicates with Kubernetes. Explicit versions keep tool selection consistent between environments.
-
-Create the container configuration directory and file:
-
-```sh
-mkdir -p .devcontainer
-vim .devcontainer/devcontainer.json
-```
-
-Full current contents of [devcontainer.json](https://github.com/nazmur96/codex-k8s-projects/blob/main/.devcontainer/devcontainer.json):
-
-```json
-{
-  "name": "EKS Terraform Lab",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-  "features": {
-    "ghcr.io/devcontainers-extra/features/mise:1": {}
-  },
-  "mounts": [
-    "source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind"
-  ],
-  "postCreateCommand": "mise trust && mise install",
-  "remoteUser": "vscode"
-}
-```
-
-| Setting | Purpose |
-| --- | --- |
-| `name` | Human-readable development environment name. |
-| `image` | Ubuntu base image containing the container userland. The `ubuntu` tag is mutable; it does not pin an exact image digest. |
-| `features` | Adds mise to the image. `:1` selects the feature's major version. |
-| `mounts` | Shares the host's existing AWS directory with the container. `${localEnv:HOME}` resolves to the host user's home. This setting was added after our first launch; see step 4. |
-| `postCreateCommand` | Trusts our mise configuration and installs its tools after container creation. |
-| `remoteUser` | Runs our development session as the regular Linux user `vscode`. |
-
-Save and exit Vim as above. The container runs:
-
-```sh
-mise trust && mise install
-```
-
-That command runs **inside the container** during creation. Running `mise exec` on the host can automatically install missing tools on the host; avoid doing that for this project.
-
-A host warning such as `mise WARN missing: terraform@...` is expected when the tools are installed only inside the container. It does not mean the container setup failed. Do not run a host installation just to clear that warning.
-
-### 3. Start and enter the container
-
-From the project directory on the **host**:
-
-```sh
-devpod up . --id eks-lab --provider docker --ide none
-ssh eks-lab.devpod
-```
-
-We also tried the following **host** command, which launched Cursor:
-
-```sh
-devpod up . --id eks-lab --provider docker --ide cursor
-```
-
-An editor window opening does not prove its terminal is inside the container. The initial Cursor terminal returned `Outside Docker`. We attempted Cursor's **Connect via SSH** flow using `eks-lab.devpod`; its folder picker started in `/home/vscode`. The project path is `/workspaces/eks-lab`, not the host path or `/workspaces/codex-k8s-projects`. Completing the Cursor connection was not verified. SSH from an Orca terminal was verified and is our working terminal workflow.
-
-Inside the **container**:
-
-```sh
-test -f /.dockerenv && echo "Inside Docker" || echo "Outside Docker"
-pwd
-mise exec -- terraform version
-mise exec -- aws --version
-mise exec -- kubectl version --client
-```
-
-Verified project path: `/workspaces/eks-lab`. Keep one host terminal and one container terminal open. `exit` leaves the SSH session without stopping the container.
-
-Expected version checks returned Terraform `1.17.1`, AWS CLI `2.39.3`, and kubectl client `1.37.2`.
-
-The prompt `vscode ➜ /workspaces/eks-lab (main) $` shows the container username, directory, and Git branch. The host prompt shows `orca/projects/codex-k8s-projects`. Use the host terminal for Docker/DevPod management and the container terminal for Terraform/AWS/kubectl. No repeated SSH login is needed while that container terminal remains connected.
-
-Useful **host** inspection commands:
-
-```sh
-devpod provider list
-devpod list
-docker ps
-```
-
-### 4. Share the existing AWS configuration
-
-Initially, this command returned no profiles inside the container:
-
-```sh
-mise exec -- aws configure list-profiles
-```
-
-We checked the host configuration with these **host** commands:
-
-```sh
-ls -ld ~/.aws
-ls -l ~/.aws/config
-```
-
-Running them inside the container before adding the mount reported `/home/vscode/.aws` missing. That was the container's home directory, not evidence that the host configuration was absent.
-
-The host profile listing confirmed the required profiles existed. During troubleshooting, running `mise exec -- aws configure list-profiles` on the host unintentionally installed the project's tool versions there. Those exact host installations were subsequently removed:
-
-```sh
-# Host only: this cleanup was already completed.
-mise uninstall terraform@1.17.1 aws-cli@2.39.3 kubectl@1.37.2 --yes
-```
-
-Older versions used by other projects were preserved. The container's three tools were checked again and still worked.
-
-We added this bind mount to the devcontainer configuration:
-
-```json
-"mounts": [
-  "source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind"
-]
-```
-
-This exposes the host's existing AWS configuration and login cache to the container. It is writable so login can update its session. It does not copy those files into Git. Only use this mount with trusted containers.
-
-After changing mounts, recreate from the **host**, then reconnect:
-
-```sh
-devpod up . --id eks-lab --provider docker --ide none --recreate
-ssh eks-lab.devpod
-```
-
-Check inside the **container**:
-
-```sh
-mise exec -- aws configure list-profiles
-```
-
-Both `authentik` and `authentik-tf` were visible after recreation.
-
-### 5. Authenticate through Authentik
-
-Authentication is keyless, through the existing Authentik federation and `AuthentikAdmin` role. No IAM access keys are created.
-
-Run inside the **container**:
-
-```sh
-mise exec -- aws login --profile authentik --region eu-central-1 --remote
-```
-
-Follow the browser approval instructions privately. A browser AWS Console session does not by itself authenticate the CLI.
-
-Our initial login without `--remote` failed at the browser's `127.0.0.1` callback: the browser was on the host while the listener was inside the container. We cancelled it with Ctrl+C and used `--remote` successfully.
-
-That initial command was:
-
-```sh
-mise exec -- aws login --profile authentik --region eu-central-1
-```
-
-For this host-browser/container-terminal setup, use the `--remote` command above instead.
-
-Verify the CLI session:
-
-```sh
-mise exec -- aws sts get-caller-identity --profile authentik --region eu-central-1
-```
-
-The expected Authentik-backed account and role were confirmed. Do not commit login URLs, authorization codes, tokens, or session caches.
-
-**Next check, not yet verified:**
-
-```sh
-mise exec -- aws sts get-caller-identity --profile authentik-tf --region eu-central-1
-```
-
-Terraform will use `AWS_PROFILE=authentik-tf`. We will verify that profile before running Terraform against AWS.
-
-## Cost and change controls
-
-- Verify an AWS budget alert before creating infrastructure. Alerts are notifications, not a spending cap.
-- Estimate the chosen region, node size, storage, and network configuration before applying.
-- EKS standard-support control-plane pricing is $0.10/hour; EC2, EBS, networking, and other selected services are additional. Recheck current regional pricing before deployment: https://aws.amazon.com/eks/pricing/
-- Obtain explicit approval before billed AWS resource creation and every Terraform apply or destroy.
-- Destroy lab resources at the end of each session, with approval, and verify cleanup. Closing a terminal does not stop AWS charges.
-
-## How this repository will grow
-
-Add configuration, explanations, troubleshooting notes, and actual validation evidence as each step is completed. Keep planned steps separate from verified results. GitHub documentation is part of the project; publishing an article is a later, explicitly requested step.
+Terraform remains in its existing directory while apply runs. Future projects can have their own code and guide directories. No live working directory or state was moved for this documentation change.
+
+## Progress
+
+- [x] Prepare and verify the Docker devcontainer and pinned tools.
+- [x] Verify Authentik-backed CLI and Terraform profiles.
+- [x] Confirm account-wide budget alerts and review cost estimate.
+- [x] Write Terraform and validate configuration.
+- [x] Review a saved plan and obtain creation approval.
+- [ ] Complete infrastructure creation — in progress.
+- [ ] Prove nodes Ready, core add-ons healthy, and DNS functional.
+- [ ] Deploy and verify a test workload.
+- [ ] Destroy lab infrastructure with approval and verify cleanup.
+
+**Cost:** allow approximately $0.25–$0.30/hour before taxes and usage-based extras for this configuration. The existing $40/month account-wide budget is an alert, not a spending cap. Keep state private, preserve it for cleanup, and destroy the lab after testing. See guide 03 for assumptions and pricing references.
+
+Documentation is updated as work is completed. Article publishing is a separate, later action.

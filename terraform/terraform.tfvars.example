@@ -1,0 +1,3 @@
+# Replace with the public IPv4 address used by your devcontainer, followed by /32.
+# This is a documentation-only address, not a working allowlist value.
+admin_cidr = "203.0.113.10/32"
