@@ -1,6 +1,6 @@
 # Terraform implementation, step by step
 
-All commands in this guide run in the **devcontainer** unless marked otherwise. We wrote the following files incrementally, explained each resource, and ran formatting and validation throughout. These are full source snapshots at this checkpoint.
+All commands in this guide run in the **devcontainer** unless marked otherwise. We wrote the following files incrementally, explained each resource, and ran formatting and validation throughout. These are full source snapshots at this checkpoint. The node type is updated to t3.small following the failed first apply; guide 06 records why.
 
 ## Create the Terraform directory
 
@@ -349,7 +349,7 @@ resource "aws_eks_access_policy_association" "admin" {
 
 ## Managed EC2 workers — `nodes.tf`
 
-The managed node group uses private subnets, the node role, Amazon Linux 2023 x86_64 EKS images, and two On-Demand t3.medium instances (2 vCPU and 4 GiB RAM each). Each root disk is 20 GiB. Desired/minimum/maximum capacity is 2/1/2. These bounds do not install an autoscaler.
+The managed node group uses private subnets, the node role, Amazon Linux 2023 x86_64 EKS images, and two On-Demand t3.small instances (2 vCPU and 2 GiB RAM each). Each root disk is 20 GiB. Desired/minimum/maximum capacity is 2/1/2. These bounds do not install an autoscaler.
 
 `max_unavailable = 1` limits unavailable nodes during managed updates. EKS handles node provisioning/replacement and coordinates updates we request; we still choose capacity and update settings. Dependencies ensure node IAM attachments and private outbound routing are established first.
 
@@ -366,7 +366,7 @@ resource "aws_eks_node_group" "main" {
 
   version        = aws_eks_cluster.main.version
   ami_type       = "AL2023_x86_64_STANDARD"
-  instance_types = ["t3.medium"]
+  instance_types = ["t3.small"]
   capacity_type  = "ON_DEMAND"
   disk_size      = 20
 

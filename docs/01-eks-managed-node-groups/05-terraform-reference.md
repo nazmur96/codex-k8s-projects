@@ -170,7 +170,7 @@ An EKS access policy controls Kubernetes permissions; an IAM permission policy c
 | Node-group `subnet_ids` | Selects private subnets as possible worker locations. |
 | Node-group `version` | Matches the cluster's Kubernetes version. |
 | `ami_type` | Selects the EKS-optimized Amazon Linux 2023 x86 image family. |
-| `instance_types` | Selects t3.medium: 2 vCPUs and 4 GiB RAM per node. |
+| `instance_types` | Selects t3.small: 2 vCPUs and 2 GiB RAM per node. |
 | `capacity_type = "ON_DEMAND"` | Uses regular EC2 capacity rather than Spot capacity. |
 | `disk_size = 20` | Gives each worker a 20 GiB root disk. |
 | `desired_size = 2` | Requests two workers initially. |

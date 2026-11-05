@@ -4,7 +4,7 @@
 
 In the Authentik-backed AWS Console, opened Billing and Cost Management → Budgets → existing podinfo budget. The learner confirmed $40/month, alert thresholds and email recipient configured, and no filters. Therefore it covers the entire account, including both projects. Exact thresholds were not recorded. Alerts notify; they do not cap spending. No new budget was created.
 
-The pre-apply allowance was approximately $0.25–$0.30/hour before tax and usage-based extras: $0.10/hour standard-support EKS control plane, approximately $0.096/hour for two Frankfurt t3.medium nodes, approximately $0.05–$0.07/hour NAT, $0.005/hour public IPv4, and under $0.01/hour for 40 GiB total root storage. This is an estimate, not a billing guarantee. Roughly $1–$1.20 for four hours or $183–$219 for 730 hours, before extras. NAT processing, cross-AZ transfer, internet egress, and possible burst CPU charges are additional. Creation/deletion time also contributes to usage.
+**Historical first-plan estimate:** the pre-apply allowance was approximately $0.25–$0.30/hour before tax and usage-based extras: $0.10/hour standard-support EKS control plane, approximately $0.096/hour for two Frankfurt t3.medium nodes, approximately $0.05–$0.07/hour NAT, $0.005/hour public IPv4, and under $0.01/hour for 40 GiB total root storage. This is an estimate, not a billing guarantee. Roughly $1–$1.20 for four hours or $183–$219 for 730 hours, before extras. NAT processing, cross-AZ transfer, internet egress, and possible burst CPU charges are additional. Creation/deletion time also contributes to usage.
 
 Sources: [EKS](https://aws.amazon.com/eks/pricing/), [VPC/NAT/IPv4](https://aws.amazon.com/vpc/pricing/), [EC2](https://aws.amazon.com/ec2/pricing/on-demand/), [Frankfurt instance estimate](https://www.doit.com/compute/compute/aws/eu-central-1/t3.medium), [EBS](https://aws.amazon.com/ebs/pricing/). Recheck regional prices before future runs.
 
@@ -115,3 +115,7 @@ The November 4 downloaded master catalog, deduplicated-devops-projects.md, expli
 | 23 | This EKS/node-group/core-add-on lab |
 
 The Kubernetes-only extract deliberately omits foundational projects 16–22. We retain this lab's explicit resources and local state, leaving remote-state/module exercises for a separate project. The broader DevSecOps workflow remains a reference; this exercise does not claim to complete a full production platform.
+
+## Update after the first apply
+
+AWS rejected t3.medium under the account’s Free Tier restriction. We switched to two eligible t3.small workers, each with 2 vCPUs and 2 GiB RAM. The recovery apply and all three required functional checks succeeded. The original estimate above describes the initial configuration; the smaller nodes reduce compute cost. It is not an actual measured bill. See guide 06 for diagnosis, plan, and recovery details.

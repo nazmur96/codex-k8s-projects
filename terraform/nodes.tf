@@ -11,7 +11,7 @@ resource "aws_eks_node_group" "main" {
 
   version        = aws_eks_cluster.main.version
   ami_type       = "AL2023_x86_64_STANDARD"
-  instance_types = ["t3.medium"]
+  instance_types = ["t3.small"]
   capacity_type  = "ON_DEMAND"
   disk_size      = 20
 
