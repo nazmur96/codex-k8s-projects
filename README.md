@@ -6,7 +6,7 @@ Hands-on Kubernetes projects with Terraform, clear explanations, verification ev
 
 Build a minimal Amazon EKS cluster using explicit Terraform resources: a two-AZ VPC, private worker nodes, IAM roles, managed add-ons, and restricted administrator access.
 
-**Current checkpoint — November 5, 2026:** build and verification completed after recovering a node-group launch failure. Two nodes Ready, system pods healthy, DNS resolved, and test workload Ready. Destroy approved; final cleanup result and verification pending.
+**Checkpoint — November 6, 2026:** build and verification completed. Follow-up cleanup checks found empty Terraform state, no eks-lab cluster, and no VPC or Elastic IP matching the lab names. A separate orphaned-volume scan was not captured. See the lab 02 proof guide for the supplied cleanup evidence.
 
 | Guide | Contents |
 | --- | --- |
@@ -17,19 +17,29 @@ Build a minimal Amazon EKS cluster using explicit Terraform resources: a two-AZ 
 | [05 — Terraform quick reference](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/01-eks-managed-node-groups/05-terraform-reference.md) | Every component and setting explained in one-line tables: VPC, routing, SG/NACL, IAM, endpoints, workers, add-ons, and state |
 | [06 — Node launch failure and recovery](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/01-eks-managed-node-groups/06-node-launch-failure.md) | Free Tier restriction, partial deployment, eligible instance lookup, and reviewed recovery |
 
+## Lab 02: Terraform remote state, modules and locks — catalog #16
+
+Build a reusable VPC/subnet module, store dev state in S3, and prove two applies cannot hold the same state lock. Build and required proofs completed November 6, 2026; **lab 02 cleanup remains pending**.
+
+[Start the beginner guide](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/README.md) · [Concepts](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/01-concepts.md) · [Complete files and commands](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/02-build.md) · [Proofs, troubleshooting and cleanup](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/03-proof-and-cleanup.md)
+
 ## Repository layout
 
 ```text
-.devcontainer/devcontainer.json   Development container and local AWS mount
-mise.toml                        Pinned project tools
-terraform/                       Runnable root module and provider lock file
-kubernetes/test-app.yaml         Verified NGINX test Deployment
-docs/01-eks-managed-node-groups/  Step-by-step project guides
+.devcontainer/                    Shared Docker development environment
+mise.toml                         Pinned tools inside the container
+terraform/                        Lab 01 EKS root (existing location)
+kubernetes/                       Lab 01 test workload
+labs/02-terraform-state/bootstrap/ Backend bucket root (local state)
+labs/02-terraform-state/modules/   Reusable networking module
+labs/02-terraform-state/environments/dev/ Dev root (S3 state)
+docs/01-eks-managed-node-groups/   Lab 01 guides
+docs/02-terraform-state/           Lab 02 guides
 ```
 
-Terraform remains in its existing directory throughout deployment and cleanup. Future projects can have their own code and guide directories. No live working directory or state was moved for this documentation change.
+No existing live root or state was relocated. Each lab retains its own cleanup scope.
 
-## Progress
+## Lab 01 progress
 
 - [x] Prepare and verify the Docker devcontainer and pinned tools.
 - [x] Verify Authentik-backed CLI and Terraform profiles.
@@ -39,7 +49,7 @@ Terraform remains in its existing directory throughout deployment and cleanup. F
 - [x] Complete infrastructure creation after recovery with eligible t3.small workers.
 - [x] Prove nodes Ready, core add-on pods healthy, and DNS functional.
 - [x] Deploy and verify a test workload.
-- [ ] Destroy lab infrastructure with approval and verify cleanup.
+- [x] Confirm empty state and absence of the named EKS cluster, VPC and NAT Elastic IP (November 6 learner-supplied checks).
 
 **Cost:** allow approximately $0.25–$0.30/hour before taxes and usage-based extras for the initial t3.medium configuration; the final t3.small workers reduce compute cost. The existing $40/month account-wide budget is an alert, not a spending cap. Keep state private, preserve it for cleanup, and destroy the lab after testing. See guide 03 for assumptions and pricing references.
 

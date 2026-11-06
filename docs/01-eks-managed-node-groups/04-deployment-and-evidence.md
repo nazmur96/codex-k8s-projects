@@ -223,3 +223,10 @@ mise exec -- terraform destroy
 Review the proposed deletions and enter `yes` to confirm this lab’s destruction. The separate Podinfo project and existing AuthentikAdmin role are outside this Terraform state. Preserve state and keep the terminal open. If errors occur, inspect remaining resources rather than deleting state.
 
 **Pending:** record Destroy complete output, then read the remaining state and verify the lab’s EKS cluster, workers, NAT, Elastic IP, and storage are gone. No destroy command was executed by this documentation update. Closing SSH or the container does not stop AWS charges.
+
+
+## November 6, 2026 — follow-up cleanup checks
+
+The learner reported empty state, ResourceNotFoundException for cluster eks-lab, and empty arrays for the named eks-lab-vpc and eks-lab-nat-eip checks under the verified AuthentikAdmin account. This supersedes the earlier pending status for these specific checks. A separate orphaned-volume scan and the original destroy-complete output were not captured. These are learner-supplied results, not a new agent-run AWS audit.
+
+[Full commands and evidence boundaries](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/03-proof-and-cleanup.md).
