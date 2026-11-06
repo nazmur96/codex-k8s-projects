@@ -182,9 +182,9 @@ The earlier README still marked cleanup unconfirmed. On November 6 the learner r
 
 These establish that the tracked state was empty and those named resources were absent. A separate scan for orphaned EBS volumes was not captured; do not describe these targeted checks as a complete account-wide cost audit. Podinfo resources were outside the scope of the checks.
 
-## Cleanup — pending, not performed
+## Cleanup procedure — subsequently completed
 
-Build/proof completion is separate from cleanup completion. No project #16 destroy approval or result has been recorded. Preserve both states. Destroying a container does not delete AWS resources.
+Build/proof completion is separate from cleanup completion. The original instructions below were written before cleanup; the final completion record at the end supersedes that pending checkpoint. Preserve both states. Destroying a container does not delete AWS resources.
 
 ### A. Disposable dev network
 
@@ -232,3 +232,18 @@ No bucket-emptying or destruction command is provided for blind execution. Do no
 ## Git hygiene
 
 Commit `.tf` sources, documentation, and both roots' `.terraform.lock.hcl` files. Do not commit `.terraform/`, state or backups, plans, tfvars, AWS files, login material, or kubeconfig. This lab has no kubeconfig requirement. Internal documentation links use absolute GitHub URLs.
+
+
+## Final cleanup checkpoint — November 6, 2026
+
+- Learner supplied `Destroy complete! Resources: 3 destroyed.` for both subnets and the VPC.
+- Learner confirmed empty dev state and empty AWS VPC/subnet tag-filter results.
+- User explicitly authorized the agent to remove the backend and all its versions.
+- Agent inspected the bucket: only this lab's state/lock keys, 12 stored object versions and 9 delete markers; no current active lock. Dev state was independently verified empty.
+- Agent temporarily removed prevent_destroy, generated and checked a fresh plan containing only the four bootstrap deletions, and deleted all versions and delete markers.
+- The first cleanup script stopped because a successful quiet delete returned no JSON. A follow-up listing verified the bucket was empty before proceeding.
+- Captured backend result: `Apply complete! Resources: 0 added, 0 changed, 4 destroyed.`
+- Agent verified empty bootstrap state and absence of the bucket from AWS list-buckets.
+- Restored the example's prevent_destroy guard afterward for safe future reuse. No resources were recreated.
+
+**Project #16 build, proofs, and cleanup are complete.** The dev backend still points to the now-deleted bucket; a future rebuild must create bootstrap first. Do not reuse old plans. Local ignored states and plans were not published. No Podinfo resources were changed.

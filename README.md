@@ -19,7 +19,7 @@ Build a minimal Amazon EKS cluster using explicit Terraform resources: a two-AZ 
 
 ## Lab 02: Terraform remote state, modules and locks — catalog #16
 
-Build a reusable VPC/subnet module, store dev state in S3, and prove two applies cannot hold the same state lock. Build and required proofs completed November 6, 2026; **lab 02 cleanup remains pending**.
+Build a reusable VPC/subnet module, store dev state in S3, and prove two applies cannot hold the same state lock. Build and required proofs completed November 6, 2026; **lab 02 cleanup verified complete**.
 
 [Start the beginner guide](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/README.md) · [Concepts](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/01-concepts.md) · [Complete files and commands](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/02-build.md) · [Proofs, troubleshooting and cleanup](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/03-proof-and-cleanup.md)
 
