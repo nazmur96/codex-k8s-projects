@@ -16,6 +16,8 @@ Only dev was deployed. Staging is explained as an extension, not claimed as comp
 
 ## Read in this order
 
+Prefer learning through a story? Start with [a conversation between folders](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/04-folder-conversation.md), which follows the storage manager, project manager and network engineer through all ten chapters.
+
 1. [Understand the ideas](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/01-concepts.md).
 2. [Build it step by step, with complete files](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/02-build.md).
 3. [Run the proofs, troubleshoot and clean up](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/03-proof-and-cleanup.md).

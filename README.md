@@ -23,6 +23,8 @@ Build a reusable VPC/subnet module, store dev state in S3, and prove two applies
 
 [Start the beginner guide](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/README.md) · [Concepts](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/01-concepts.md) · [Complete files and commands](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/02-build.md) · [Proofs, troubleshooting and cleanup](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/03-proof-and-cleanup.md)
 
+[Read the folder conversation](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/04-folder-conversation.md) — follow bootstrap, dev and the network module as three employees exchanging inputs and outputs.
+
 ## Repository layout
 
 ```text
