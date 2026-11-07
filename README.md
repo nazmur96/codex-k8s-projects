@@ -25,6 +25,12 @@ Build a reusable VPC/subnet module, store dev state in S3, and prove two applies
 
 [Read the folder conversation](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/02-terraform-state/04-folder-conversation.md) — follow bootstrap, dev and the network module as three employees exchanging inputs and outputs.
 
+## Lab 03: Three-tier AWS VPC — catalog #17
+
+Build a two-AZ network with a public ALB, private API tier and isolated database tier. **November 7, 2026 checkpoint: implementation in progress; not deployed.** Network, routing, security groups, S3 endpoint, ALB and API IAM configuration are written. EC2 workloads, startup/bootstrap configuration, target registrations and the state-backend decision remain unfinished; live proofs and cleanup follow deployment.
+
+[Start the guide](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/03-three-tier-vpc/README.md) · [Design and concepts](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/03-three-tier-vpc/01-design-and-concepts.md) · [Build checkpoint and remaining work](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/03-three-tier-vpc/02-build-and-checkpoint.md) · [Complete checkpoint source](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/03-three-tier-vpc/04-checkpoint-source.md) · [Proof and cleanup plan](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/03-three-tier-vpc/03-proof-and-cleanup.md)
+
 ## Repository layout
 
 ```text
@@ -35,8 +41,10 @@ kubernetes/                       Lab 01 test workload
 labs/02-terraform-state/bootstrap/ Backend bucket root (local state)
 labs/02-terraform-state/modules/   Reusable networking module
 labs/02-terraform-state/environments/dev/ Dev root (S3 state)
+labs/03-three-tier-vpc/            Lab 03 network and workload checkpoint
 docs/01-eks-managed-node-groups/   Lab 01 guides
 docs/02-terraform-state/           Lab 02 guides
+docs/03-three-tier-vpc/            Lab 03 guides and pending proofs
 ```
 
 No existing live root or state was relocated. Each lab retains its own cleanup scope.
