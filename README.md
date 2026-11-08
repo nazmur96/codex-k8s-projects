@@ -31,6 +31,12 @@ Build a two-AZ network with a public ALB, private API tier and isolated database
 
 [Start the guide](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/03-three-tier-vpc/README.md) · [Design and concepts](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/03-three-tier-vpc/01-design-and-concepts.md) · [Build checkpoint and remaining work](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/03-three-tier-vpc/02-build-and-checkpoint.md) · [Complete checkpoint source](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/03-three-tier-vpc/04-checkpoint-source.md) · [Proof and cleanup plan](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/03-three-tier-vpc/03-proof-and-cleanup.md)
 
+## Lab 04: Restrictive AWS security groups — catalog #18
+
+Prove that security groups, not subnets or routes, decide who may connect. An ALB, an app, a stand-in database and an unauthorized "probe" share one private subnet. Only ALB → app and app → db are allowed. Build and proofs completed November 8, 2026: 4 allowed paths passed, 3 denied paths failed as expected, and removing the db's only app rule cut app → db. **Cleanup verified complete.**
+
+[Start the guide](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/04-security-groups/README.md) · [Concepts](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/04-security-groups/01-concepts.md) · [Complete files and commands](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/04-security-groups/02-build.md) · [Proofs, break drill and cleanup](https://github.com/nazmur96/codex-k8s-projects/blob/main/docs/04-security-groups/03-proof-and-cleanup.md)
+
 ## Repository layout
 
 ```text
@@ -42,9 +48,11 @@ labs/02-terraform-state/bootstrap/ Backend bucket root (local state)
 labs/02-terraform-state/modules/   Reusable networking module
 labs/02-terraform-state/environments/dev/ Dev root (S3 state)
 labs/03-three-tier-vpc/            Lab 03 network and workload checkpoint
+labs/04-security-groups/           Lab 04 security-group lab (local state)
 docs/01-eks-managed-node-groups/   Lab 01 guides
 docs/02-terraform-state/           Lab 02 guides
 docs/03-three-tier-vpc/            Lab 03 guides and pending proofs
+docs/04-security-groups/           Lab 04 guides, proofs and cleanup
 ```
 
 No existing live root or state was relocated. Each lab retains its own cleanup scope.
